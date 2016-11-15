@@ -1,8 +1,9 @@
 # Data-Science
 Set of educational materials. 
 
-##COURSERA (http://www.coursera.org)
+##COURSERA
 Johns Hopkins University Course on Data Science
+http://www.coursera.org
 
 ##PROMETHEUS
 Course in Ukrainian on Data Analyzis and Statistic inference in R
