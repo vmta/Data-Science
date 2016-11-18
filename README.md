@@ -2,7 +2,7 @@
 Set of educational materials. 
 
 ##COURSERA
-The Data Scientist's Toolboxi (by Johns Hopkins University)
+The Data Scientist's Toolbox (by Johns Hopkins University)
 https://www.coursera.org/learn/data-scientists-tools/
 
 Higher School of Economics (Высшая школа Экономики)
