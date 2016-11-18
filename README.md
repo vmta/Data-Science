@@ -2,8 +2,11 @@
 Set of educational materials. 
 
 ##COURSERA
-Johns Hopkins University Course on Data Science
-http://www.coursera.org
+The Data Scientist's Toolboxi (by Johns Hopkins University)
+https://www.coursera.org/learn/data-scientists-tools/
+
+Higher School of Economics (Высшая школа Экономики)
+https://www.coursera.org/learn/ekonometrika/
 
 ##PROMETHEUS
 Course in Ukrainian on Data Analyzis and Statistic inference in R
