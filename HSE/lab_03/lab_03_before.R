@@ -9,3 +9,22 @@ library("hexbin")
 library("pander")
 library("sjPlot")
 library("knitr")
+
+h <- diamonds
+glimpse(h)
+
+qplot(data=h, carat, price)
+qplot(data=h, log(carat), log(price))
+bg <- qplot(data=h, log(carat), log(price))
+bg + geom_hex()
+
+f <- read.csv("flats_moscow.txt", sep="\t", header = TRUE, dec=".")
+qplot(data = f, totsp, price)
+qplot(data = f, log(totsp), log(price))
+#mosaicplot(data=f, f$brick+f$walk+f$floor, shade=TRUE)
+f <- mutate_each(f, "factor", walk, brick, floor, code)
+glimpse(f)
+qplot(data=f, log(price))
+g2 <- qplot(data=f, log(price), fill=brick, geom="density", alpha=0.5)
+
+g2 + facet_grid(~f$floor)
