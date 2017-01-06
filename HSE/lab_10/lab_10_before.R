@@ -13,6 +13,7 @@ library("randomForest") # случайный лес
 library("rattle") # визуализация деревьев
 library("caret") # стандартный подход к регрессионным и классификационным задачам
 library("rpart") # классификационные и регрессионные деревья
+library("lattice")
 
 
 f <- read.table("flats_moscow.txt", header = TRUE, sep = "\t", dec = ".")
@@ -55,3 +56,57 @@ f_test <- f[-in_sample,]
 model_lm <- lm(data=f_train, price~totsp+kitsp+livesp+brick)
 # Оценим модель случайного леса
 model_rf <- randomForest(data=f_train, price~totsp+kitsp+livesp+brick)
+# 
+# Прогнозируем...
+# 
+# Сначала отберем реальные данные из тестовой выборки (т.е. фактически
+# наблюдаемые переменные, которые мы попытаемся спрогнозировать исполь-
+# зуя модели линейной регрессии и случайного леса).
+y <- f_test$price
+# Спрогнозируем наблюдаемые переменные моделью линейной регрессии.
+y_hat_lm <- predict(model_lm, f_test)
+# Спрогнозируем наблюдаемые переменные моделью случайного леса.
+y_hat_rf <- predict(model_rf, f_test)
+# 
+# Оценим RSS (сумму квадратов остатков) прогнозных значений
+rss_lm <- sum((y - y_hat_lm)^2)
+rss_lm
+rss_rf <- sum((y - y_hat_rf)^2)
+rss_rf
+
+# Bayesian approach
+
+# Создадим плохой набор данных, в котором для логит-модели оценки коэфф.
+# отсутствуют.
+bad <- data.frame(y=c(0,0,1), x=c(1,2,3))
+bad
+model_logit <- glm(data=bad, y~x, family=binomial(link="logit"))
+summary(model_logit)
+
+# prior: beta ~ N(0, 50^2)
+model_mcmc_logit <- MCMClogit(data=bad, y~x, b0=0, B0=1/50^2)
+summary(model_mcmc_logit)
+
+# Spike and Slab regression
+# Возьмем исходный набор данных по автомобилям и несколько его видоизменим
+h <- mutate(cars, speed=1.61*speed, dist=0.3*dist)
+h$junk <- rnorm(nrow(h))
+h <- mutate(h, speed2=speed^2)
+# Оценим модель линейной регрессии
+model_lm <- lm(data=h, dist~speed+junk)
+summary(model_lm)
+# Оценим модель Spike-and-Slab
+model_ss <- spikeslab(data=h, dist~speed+junk, n.iter2 = 4000)
+print(model_ss)
+model_ss$summary
+# 
+included_regressors <- melt(model_ss$model)
+included_regressors
+# 
+# (Переменная 1 - скорость включалась во все наблюдения и с
+# вероятностью 1 * 100% она влияет на результат - на длину тормозного пути)
+sum(included_regressors$value==1)/4000
+# (Переменная 2 - мусор(junk, искусственно созданный и включенный нами в
+# набор данных) включалась не во все наблюдения и с вероятностью
+# 0.409 * 100% она влияет на результат - на длину тормозного пути)
+sum(included_regressors$value==2)/4000
